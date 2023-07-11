@@ -9,6 +9,10 @@ cdk synth
 cdk deploy
 ```
 
+## Samples
+
+* Samples under [here](sqls)
+
 ## Destroy
 
 ```sh
