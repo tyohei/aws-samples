@@ -1,0 +1,20 @@
+type User {
+  firstName: String!
+  lastName: String!
+  userId: String!
+}
+
+input UserInput {
+  firstName: String!
+  lastName: String!
+}
+
+type Query {
+  getUser(userId: String!): User!
+  listUsers: [ User! ]
+}
+
+type Mutation {
+  addUser(input: UserInput!): User!
+  updateUser(userId: Int!, input: UserInput!): User!
+}
