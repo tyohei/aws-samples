@@ -1,0 +1,75 @@
+# vim: ft=cloudformation.yaml
+AWSTemplateFormatVersion: "2010-09-09"
+
+
+Parameters:
+  Prefix:
+    Type: String
+
+
+Resources:
+  # ==== API Gateway ====
+  RestApi:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: !Sub "${Prefix}-rest-api-mock"
+      EndpointConfiguration:
+        Types:
+          - EDGE
+
+  ProdDeployment:
+    DependsOn:
+      - RootMethod
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      StageName: prod
+      RestApiId: !Ref RestApi
+      StageDescription:
+        LoggingLevel: INFO
+        DataTraceEnabled: true
+
+  RootMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref RestApi
+      ResourceId: !GetAtt "RestApi.RootResourceId"
+      HttpMethod: POST
+      AuthorizationType: AWS_IAM
+      # https://docs.aws.amazon.com/apigateway/api-reference/resource/method/#authorizationType
+      #   1. NONE
+      #   2. AWS_IAM
+      #   3. CUSTOM
+      #   4. COGNITO_USER_POOLS
+      MethodResponses:
+        # You should have at least one Method Response.
+        - StatusCode: "200"  # this is mapped to a IntegrationResponse
+      Integration:
+        # https://docs.aws.amazon.com/apigateway/api-reference/resource/integration/#type
+        #   1. AWS (AWS Service)
+        #   2. AWS_PROXY (a.k.a. Lambda Proxy)
+        #   3. HTTP
+        #   4. HTTP_PROXY
+        #   5. MOCK
+        Type: MOCK
+        RequestTemplates:
+          # This is means:
+          # If the "Content-Type" header in the request is "application/json",
+          # then the integration request will be "{"statusCode": 200}"
+          application/json: |
+            {
+              "statusCode": 200,
+            }
+        IntegrationResponses:
+          # You should have at least one Method Response.
+          - StatusCode: "200"
+            ResponseTemplates:
+              application/json: |
+                {
+                  "statusCode": 200,
+                  "message": "MOCK!!!!!",
+                }
+
+
+Outputs:
+  Endpoint:
+    Value: !Sub "https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/prod/"
