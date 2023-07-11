@@ -29,8 +29,23 @@ LOCATION 's3://{S3_BUCKET_NAME}/select/'
 
 ## SELECT
 
-* Go to Athena's Management Console
+* Go to Athena Management Console and launch Query Editor
+* Select
+    * Data source: `AwsDataCatalog`
+    * Database: `default`
 
 ```sql
 SELECT * FROM "default"."sampleselect" limit 10;
 ```
+
+### Python Example
+
+```sh
+cd python-sdk/
+
+S3_BUCKET_NAME=$(aws cloudformation describe-stack-resources --stack-name Bucket-for-Athena --query 'StackResources[?ResourceType==`AWS::S3::Bucket`].PhysicalResourceId' --output text); echo "${S3_BUCKET_NAME}"
+python main.py -o s3://${S3_BUCKET_NAME}/outputs/
+python get_query_results.py -i <EXECUTION_ID>
+```
+
+### Go Example
