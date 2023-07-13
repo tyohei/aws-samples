@@ -1,12 +1,13 @@
-import * as cdk from 'aws-cdk-lib';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as iam from 'aws-cdk-lib/aws-iam'
+import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export class MysqlStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
     const myIpAddress = this.node.tryGetContext('myIpAddress');
 
     const vpc = new ec2.Vpc(this, 'VPC', { maxAzs: 2, natGateways: 1 });
@@ -28,21 +29,19 @@ export class MysqlStack extends cdk.Stack {
       role: role
     });
 
-    // Create a new Aurora cluster with a single instance
+    // Create a new Aurora cluster with two instances
     const securityGroupForCluster = new ec2.SecurityGroup(this, 'SecurityGroupForCluster', { vpc: vpc });
     securityGroupForCluster.addIngressRule(securityGroupForInstance, ec2.Port.tcp(3306));
 
     const cluster = new rds.DatabaseCluster(this, 'Database', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_03_0 }),
-      instances: 1,
-      instanceProps: {
-        vpc: vpc,
-        vpcSubnets: {
-          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
-        },
-        publiclyAccessible: false,
-        securityGroups: [securityGroupForCluster]
-      }
+      writer: rds.ClusterInstance.provisioned('writer', { instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM) }),
+      readers: [
+        rds.ClusterInstance.provisioned('reader', { instanceType: ec2.InstanceType.of(ec2.InstanceClass.BURSTABLE3, ec2.InstanceSize.MEDIUM) }),
+      ],
+      vpc: vpc,
+      vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
+      securityGroups: [ securityGroupForCluster ]
     });
   }
 }
