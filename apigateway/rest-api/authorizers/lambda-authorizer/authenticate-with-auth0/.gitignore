@@ -7,4 +7,5 @@ node_modules
 .cdk.staging
 cdk.out
 
-jwt-rsa-aws-custom-authorizer/
+!functions/authorizer/lib.js
+!functions/authorizer/@types/*

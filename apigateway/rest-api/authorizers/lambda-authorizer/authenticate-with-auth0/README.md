@@ -15,14 +15,6 @@ cd ../..
 
 cd functions/authorizer
 npm install
-mkdir @types
-cat << EOF > lib.d.ts
-declare module "lib" {
-  import { APIGatewayAuthorizerEvent, APIGatewayAuthorizerResult } from 'aws-lambda';
-
-  export function authenticate(params: APIGatewayAuthorizerEvent): Promise<APIGatewayAuthorizerResult>;
-}
-EOF
 cd ../..
 
 # If you are using Finch instead of Docker
