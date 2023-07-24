@@ -1,14 +1,8 @@
-# Welcome to your CDK TypeScript project
+# IPv4 VPC with Four Subnets
 
-This is a blank project for CDK development with TypeScript.
+## Deploy
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+```sh
+cdk synth -c myIpAddress="$(curl --no-progress-meter https://checkip.amazonaws.com/)/32"
+cdk deploy -c myIpAddress="$(curl --no-progress-meter https://checkip.amazonaws.com/)/32"
+```
