@@ -1,0 +1,18 @@
+# https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - node --version
+      - npm --version
+      - npm ci
+  build:
+    commands:
+      - npx next build
+
+artifacts:
+  files:
+    - out/**/*
