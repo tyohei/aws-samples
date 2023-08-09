@@ -1,4 +1,4 @@
-# AWS Lambda Function (Node.js)
+# AWS Lambda Function (Python)
 
 ## Deploy
 
