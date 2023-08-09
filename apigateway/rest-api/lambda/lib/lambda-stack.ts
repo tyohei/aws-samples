@@ -13,13 +13,15 @@ export class LambdaStack extends cdk.Stack {
 
     // GET /
     const rootFunction = new lambdaNodejs.NodejsFunction(this, 'RootFunction', {
-      entry: path.join(__dirname, '../functions/root/index.ts')
+      entry: path.join(__dirname, '../functions/root/index.ts'),
+      runtime: lambda.Runtime.NODEJS_18_X,
     });
     api.root.addMethod('GET', new apigw.LambdaIntegration(rootFunction));
 
     // GET /bye
     const byeFunction = new lambdaNodejs.NodejsFunction(this, 'ByeFunction', {
-      entry: path.join(__dirname, '../functions/bye/index.ts')
+      entry: path.join(__dirname, '../functions/bye/index.ts'),
+      runtime: lambda.Runtime.NODEJS_18_X,
     });
     const byeResoure = api.root.addResource('bye');
     byeResoure.addMethod('GET', new apigw.LambdaIntegration(byeFunction));
