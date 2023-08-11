@@ -8,13 +8,10 @@ export class MysqlStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const myIpAddress = this.node.tryGetContext('myIpAddress');
-
     const vpc = new ec2.Vpc(this, 'VPC', { maxAzs: 2, natGateways: 1 });
 
     // Create a new EC2 instance
     const securityGroupForInstance = new ec2.SecurityGroup(this, 'SecurityGroupForInstance', { vpc: vpc });
-    securityGroupForInstance.addIngressRule(ec2.Peer.ipv4(myIpAddress), ec2.Port.tcp(22));
 
     const role = new iam.Role(this, 'Role', { assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com') });
     role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));

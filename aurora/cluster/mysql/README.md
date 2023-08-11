@@ -3,8 +3,8 @@
 ## Deploy
 
 ```sh
-cdk synth -c myIpAddress="$(curl --no-progress-meter https://checkip.amazonaws.com/)/32"
-cdk deploy -c myIpAddress="$(curl --no-progress-meter https://checkip.amazonaws.com/)/32"
+cdk synth
+cdk deploy
 ```
 
 ## Access
