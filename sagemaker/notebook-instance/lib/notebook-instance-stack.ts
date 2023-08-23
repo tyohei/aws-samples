@@ -10,7 +10,12 @@ export class NotebookInstanceStack extends cdk.Stack {
     const instanceType = this.node.tryGetContext('instanceType');
     console.log(`Using ${instanceType} for instance type.`);
 
-    const role = new iam.Role(this, 'Role', { assumedBy: new iam.ServicePrincipal('sagemaker.amazonaws.com') });
+    const role = new iam.Role(this, 'Role', {
+      assumedBy: new iam.CompositePrincipal(
+        new iam.ServicePrincipal('sagemaker.amazonaws.com'),
+        new iam.ServicePrincipal('bedrock.amazonaws.com')
+      )
+    });
     role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSageMakerFullAccess'));
     role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonForecastFullAccess'));
     role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'));
